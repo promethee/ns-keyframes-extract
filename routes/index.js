@@ -8,22 +8,23 @@ const { files_directory = './files' } = config;
 module.exports.GET = async (req, res) => {
   const { query = {} } = req;
   const { filepath = '' } = query;
-  if (filepath.length === 0) return send(res, 400, 'no filepath provided');
-  console.info(`using "${filepath}"`);
-
-  const video_filename = filepath.split('/').filter((chunk) => chunk.includes('.'))[0];
-  const clean_filepath = filepath.replace(video_filename, '');
-
-  const full_filepath = `${files_directory}/${clean_filepath}`;
-  if (!fs.existsSync(full_filepath)) return send(res, 404, 'file not found');
-  console.info(`"${full_filepath}" found`);
-  
-  const frames_directory = `${full_filepath}frames`;
-  if (!fs.existsSync(frames_directory)) fs.mkdirSync(frames_directory);
-  console.info(`"${frames_directory}" existing or created`);
-  let frameCount = 0;
 
   try {
+    if (filepath.length === 0) return send(res, 400, 'no filepath provided');
+    console.info(`using "${filepath}"`);
+  
+    const video_filename = filepath.split('/').filter((chunk) => chunk.includes('.'))[0];
+    const clean_filepath = filepath.replace(video_filename, '');
+  
+    const full_filepath = `${files_directory}/${clean_filepath}`;
+    if (!fs.existsSync(full_filepath)) return send(res, 404, 'file not found');
+    console.info(`"${full_filepath}" found`);
+    
+    const frames_directory = `${full_filepath}frames`;
+    if (!fs.existsSync(frames_directory)) fs.mkdirSync(frames_directory);
+    console.info(`"${frames_directory}" existing or created`);
+    let frameCount = 0;
+
     const extractionProcess = await extractKeyframes(`${full_filepath}/${video_filename}`);
     extractionProcess.on('start', () => {
       console.debug('Started');
