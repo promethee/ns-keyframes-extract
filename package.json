@@ -20,6 +20,6 @@
     "micro-dev": "^3.0.0"
   },
   "config": {
-    "files_directory": "../ns-youtube-dl/files"
+    "files_directory": "files"
   }
 }
