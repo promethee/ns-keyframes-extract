@@ -23,21 +23,24 @@ module.exports.GET = async (req, res) => {
   console.info(`"${frames_directory}" existing or created`);
   let frameCount = 0;
 
-  const extractionProcess = await extractKeyframes(`${full_filepath}/${video_filename}`);
-
-  extractionProcess.on('start', () => {
-    console.debug('Started');
-  }, false);
-
-  extractionProcess.on('finish', (data) => {
-    console.debug('Finish:', data);
-    send(res, 200, { frameCount, path: frames_directory });
-  });
-
-  extractionProcess.on('keyframe', ({ keyframeTimeoffset, image }) => {
-    const frame_filepath = `${frames_directory}/frame-${frameCount}_offset-${keyframeTimeoffset}_.jpg`;
-    console.debug('KEYFRAME:', { frameCount, keyframeTimeoffset, frame_filepath });
-    fs.writeFileSync(frame_filepath, image);
-    frameCount++;
-  });
+  try {
+    const extractionProcess = await extractKeyframes(`${full_filepath}/${video_filename}`);
+    extractionProcess.on('start', () => {
+      console.debug('Started');
+    }, false);
+  
+    extractionProcess.on('finish', (data) => {
+      console.debug('Finish:', data);
+      send(res, 200, { frameCount, parth: frames_directory });
+    });
+  
+    extractionProcess.on('keyframe', ({ keyframeTimeoffset, image }) => {
+      const frame_filepath = `${frames_directory}/frame-${frameCount}_offset-${keyframeTimeoffset}_.jpg`;
+      console.debug('KEYFRAME:', { frameCount, keyframeTimeoffset, frame_filepath });
+      fs.writeFileSync(frame_filepath, image);
+      frameCount++;
+    });
+  } catch (error) {
+    send(res, 500, error);
+  }
 };
