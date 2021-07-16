@@ -31,7 +31,7 @@ module.exports.GET = async (req, res) => {
 
   extractionProcess.on('finish', (data) => {
     console.debug('Finish:', data);
-    send(res, 200, { frameCount, parth: frames_directory });
+    send(res, 200, { frameCount, path: frames_directory });
   });
 
   extractionProcess.on('keyframe', ({ keyframeTimeoffset, image }) => {
